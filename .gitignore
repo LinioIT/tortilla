@@ -1,0 +1,9 @@
+.idea/
+build/
+vendor/
+bin/
+composer.phar
+cache.properties
+coverage.xml
+behat.yml
+.php_cs.cache
