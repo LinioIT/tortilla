@@ -7,6 +7,13 @@ use FastRoute\RouteCollector;
 use FastRoute\RouteParser\Std as RouteParser;
 use Linio\Exception\ErrorException;
 use Linio\Exception\HttpException;
+use Linio\Tortilla\Event\ExceptionEvent;
+use Linio\Tortilla\Event\PostResponseEvent;
+use Linio\Tortilla\Event\RequestEvent;
+use Linio\Tortilla\Event\ResponseEvent;
+use Linio\Tortilla\Listener\JsonBodyListener;
+use Linio\Tortilla\Route\ControllerResolver\ServiceControllerResolver;
+use Linio\Tortilla\Route\Dispatcher;
 use Pimple\Container;
 use Psr\Log\LogLevel;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -15,11 +22,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\TerminableInterface;
-use Linio\Tortilla\Listener\JsonBodyListener;
-use Linio\Tortilla\Route\ControllerResolver\ServiceControllerResolver;
-use Linio\Tortilla\Route\Dispatcher;
-use Linio\Tortilla\Event\RequestEvent;
-use Linio\Tortilla\Event\ExceptionEvent;
 
 class Application extends Container implements HttpKernelInterface, TerminableInterface
 {
@@ -212,7 +214,7 @@ class Application extends Container implements HttpKernelInterface, TerminableIn
      */
     public function terminate(Request $request, Response $response)
     {
-        $this['event.dispatcher']->dispatch(ApplicationEvents::TERMINATE, new Event\PostResponseEvent($request, $response));
+        $this['event.dispatcher']->dispatch(ApplicationEvents::TERMINATE, new PostResponseEvent($request, $response));
     }
 
     /**
@@ -225,7 +227,7 @@ class Application extends Container implements HttpKernelInterface, TerminableIn
         }
 
         $response = $this->handle($request);
-        $this['event.dispatcher']->dispatch(ApplicationEvents::RESPONSE, new Event\ResponseEvent($request, $response));
+        $this['event.dispatcher']->dispatch(ApplicationEvents::RESPONSE, new ResponseEvent($request, $response));
         $response->send();
         $this->terminate($request, $response);
     }
