@@ -26,7 +26,7 @@ class JsonBodyListener
         }
 
         try {
-            $data = Json::decode($request->getContent());
+            $data = Json::decode($content);
         } catch (\Exception $exception) {
             throw new BadRequestHttpException('Invalid JSON.');
         }
