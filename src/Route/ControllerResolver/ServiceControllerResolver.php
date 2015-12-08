@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Linio\Tortilla\Route\ControllerResolver;
 
@@ -11,17 +12,11 @@ class ServiceControllerResolver implements ControllerResolverInterface
      */
     protected $container;
 
-    /**
-     * @param Container $container
-     */
     public function __construct(Container $container)
     {
         $this->container = $container;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getController($input)
     {
         if (is_callable($input)) {
@@ -41,9 +36,6 @@ class ServiceControllerResolver implements ControllerResolverInterface
         return [$this->container[$controllerService], $method];
     }
 
-    /**
-     * @param Container $container
-     */
     public function setContainer(Container $container)
     {
         $this->container = $container;
