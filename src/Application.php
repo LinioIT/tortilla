@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Linio\Tortilla;
 
@@ -31,6 +32,7 @@ class Application extends Container implements HttpKernelInterface, TerminableIn
     public function __construct(array $values = [])
     {
         $this['debug'] = false;
+        $this['config'] = [];
 
         $this['event.dispatcher'] = function () {
             return new EventDispatcher();
@@ -45,7 +47,7 @@ class Application extends Container implements HttpKernelInterface, TerminableIn
         };
 
         $this['route.dispatcher'] = function () {
-            $dispatcher = new Dispatcher($this['route.collector']->getData());
+            $dispatcher = new Dispatcher($this->getRouteCache());
             $dispatcher->setControllerResolver($this['controller.resolver']);
 
             return $dispatcher;
@@ -72,13 +74,30 @@ class Application extends Container implements HttpKernelInterface, TerminableIn
         });
     }
 
+    public function getRouteCache(): array
+    {
+        $routeCache = $this['config']['route_cache'] ?? false;
+
+        if (!$this['debug'] && $routeCache && file_exists($routeCache)) {
+            return require $routeCache;
+        }
+
+        $routeData = $this['route.collector']->getData();
+
+        if (!$this['debug'] && $routeCache) {
+            file_put_contents($routeCache, '<?php return ' . var_export($routeData, true) . ';');
+        }
+
+        return $routeData;
+    }
+
     /**
      * Maps a GET request to handler.
      *
      * @param string $pattern
      * @param mixed  $handler
      */
-    public function get($pattern, $handler)
+    public function get(string $pattern, $handler)
     {
         $this['route.collector']->addRoute('GET', $pattern, $handler);
     }
@@ -89,7 +108,7 @@ class Application extends Container implements HttpKernelInterface, TerminableIn
      * @param string $pattern
      * @param mixed  $handler
      */
-    public function post($pattern, $handler)
+    public function post(string $pattern, $handler)
     {
         $this['route.collector']->addRoute('POST', $pattern, $handler);
     }
@@ -100,7 +119,7 @@ class Application extends Container implements HttpKernelInterface, TerminableIn
      * @param string $pattern
      * @param mixed  $handler
      */
-    public function put($pattern, $handler)
+    public function put(string $pattern, $handler)
     {
         $this['route.collector']->addRoute('PUT', $pattern, $handler);
     }
@@ -111,7 +130,7 @@ class Application extends Container implements HttpKernelInterface, TerminableIn
      * @param string $pattern
      * @param mixed  $handler
      */
-    public function delete($pattern, $handler)
+    public function delete(string $pattern, $handler)
     {
         $this['route.collector']->addRoute('DELETE', $pattern, $handler);
     }
@@ -122,7 +141,7 @@ class Application extends Container implements HttpKernelInterface, TerminableIn
      * @param string $pattern
      * @param mixed  $handler
      */
-    public function patch($pattern, $handler)
+    public function patch(string $pattern, $handler)
     {
         $this['route.collector']->addRoute('PATCH', $pattern, $handler);
     }
@@ -133,7 +152,7 @@ class Application extends Container implements HttpKernelInterface, TerminableIn
      * @param string $pattern
      * @param mixed  $handler
      */
-    public function options($pattern, $handler)
+    public function options(string $pattern, $handler)
     {
         $this['route.collector']->addRoute('OPTIONS', $pattern, $handler);
     }
@@ -145,14 +164,11 @@ class Application extends Container implements HttpKernelInterface, TerminableIn
      * @param string $pattern
      * @param mixed  $handler
      */
-    public function match(array $methods, $pattern, $handler)
+    public function match(array $methods, string $pattern, $handler)
     {
         $this['route.collector']->addRoute($methods, $pattern, $handler);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function handle(Request $request, $type = HttpKernelInterface::MASTER_REQUEST, $catch = true)
     {
         $event = new RequestEvent($request);
@@ -164,22 +180,16 @@ class Application extends Container implements HttpKernelInterface, TerminableIn
 
         try {
             return $this['route.dispatcher']->handle($request);
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             if ($catch === false) {
                 throw $exception;
             }
 
-            return $this->handleException($exception, $request);
+            return $this->handleErrors($exception, $request);
         }
     }
 
-    /**
-     * @param \Exception $exception
-     * @param Request    $request
-     *
-     * @return Response
-     */
-    protected function handleException(\Exception $exception, Request $request)
+    protected function handleErrors(\Throwable $exception, Request $request): Response
     {
         $event = new ExceptionEvent($exception, $request);
         $this['event.dispatcher']->dispatch(ApplicationEvents::EXCEPTION, $event);
@@ -198,28 +208,22 @@ class Application extends Container implements HttpKernelInterface, TerminableIn
 
         $response = new JsonResponse();
         $response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
-        $response->setData(['type' => '#1000', 'code' => 1000, 'title' => 'Internal error', 'status' => Response::HTTP_INTERNAL_SERVER_ERROR]);
+        $response->setData(['error' => ['message' => 'Internal error', 'code' => 500]]);
 
         if ($exception instanceof HttpException) {
             $response->setStatusCode($exception->getStatusCode());
             $response->headers->replace($exception->getHeaders());
-            $response->setData($exception->getApiProblem()->asArray());
+            $response->setData(['error' => ['message' => $exception->getMessage(), 'code' => $exception->getCode()]]);
         }
 
         return $response;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function terminate(Request $request, Response $response)
     {
         $this['event.dispatcher']->dispatch(ApplicationEvents::TERMINATE, new PostResponseEvent($request, $response));
     }
 
-    /**
-     * @param Request|null $request
-     */
     public function run(Request $request = null)
     {
         if ($request === null) {

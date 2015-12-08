@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Linio\Tortilla\Route;
 
@@ -17,14 +18,10 @@ class Dispatcher extends GroupCountBased
     protected $controllerResolver;
 
     /**
-     * @param Request $request
-     *
      * @throws NotFoundHttpException
      * @throws MethodNotAllowedHttpException
-     *
-     * @return Response
      */
-    public function handle(Request $request)
+    public function handle(Request $request): Response
     {
         $result = $this->dispatch($request->getMethod(), $request->getPathInfo());
 
@@ -44,9 +41,6 @@ class Dispatcher extends GroupCountBased
         }
     }
 
-    /**
-     * @param ControllerResolverInterface $controllerResolver
-     */
     public function setControllerResolver(ControllerResolverInterface $controllerResolver)
     {
         $this->controllerResolver = $controllerResolver;

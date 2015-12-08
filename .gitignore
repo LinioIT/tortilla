@@ -3,6 +3,7 @@ build/
 vendor/
 bin/
 composer.phar
+composer.lock
 cache.properties
 coverage.xml
 behat.yml

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Linio\Tortilla\Event;
 
@@ -12,28 +13,18 @@ class ResponseEvent extends ApplicationEvent
      */
     protected $response;
 
-    /**
-     * @param Request  $request
-     * @param Response $response
-     */
     public function __construct(Request $request, Response $response)
     {
         parent::__construct($request);
         $this->response = $response;
     }
 
-    /**
-     * @param Response $response
-     */
     public function setResponse(Response $response)
     {
         $this->response = $response;
     }
 
-    /**
-     * @return Response
-     */
-    public function getResponse()
+    public function getResponse(): Response
     {
         return $this->response;
     }

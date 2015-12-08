@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Linio\Tortilla;
 
@@ -156,7 +157,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $app['event.dispatcher'] = $eventDispatcher->reveal();
         $response = $app->handle($request);
 
-        $this->assertEquals('{"type":"#1000","code":1000,"title":"Internal error","status":500}', $response->getContent());
+        $this->assertEquals('{"error":{"message":"Internal error","code":500}}', $response->getContent());
         $this->assertEquals(500, $response->getStatusCode());
         $this->assertEquals('application/json', $response->headers->get('Content-Type'));
     }
@@ -236,7 +237,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $app['event.dispatcher'] = $eventDispatcher->reveal();
         $response = $app->handle($request);
 
-        $this->assertEquals('{"title":"foobar","type":"#1001","status":401}', $response->getContent());
+        $this->assertEquals('{"error":{"message":"foobar","code":1001}}', $response->getContent());
         $this->assertEquals(401, $response->getStatusCode());
         $this->assertEquals('application/json', $response->headers->get('Content-Type'));
     }
