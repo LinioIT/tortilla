@@ -11,9 +11,6 @@ use Pimple\ServiceProviderInterface;
 
 class MonologServiceProvider implements ServiceProviderInterface
 {
-    /**
-     * @param Container $app
-     */
     public function register(Container $app)
     {
         $app['logger'] = function () use ($app) {
