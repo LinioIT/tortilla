@@ -9,7 +9,7 @@
         "symfony/http-foundation": "~3.0",
         "symfony/http-kernel": "~3.0",
         "symfony/event-dispatcher": "~3.0",
-        "nikic/fast-route": "0.6.*",
+        "nikic/fast-route": "~1.0",
         "pimple/pimple": "~3.0",
         "linio/common": "~2.0",
         "linio/util": "~2.0"
