@@ -1,10 +1,11 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Linio\Tortilla\Listener;
 
-use Symfony\Component\HttpFoundation\Request;
 use Linio\Tortilla\Event\RequestEvent;
+use Symfony\Component\HttpFoundation\Request;
 
 class JsonBodyListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -41,7 +42,7 @@ class JsonBodyListenerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException Linio\Exception\BadRequestHttpException
+     * @expectedException \Linio\Exception\BadRequestHttpException
      */
     public function testIsDetectingBadJson()
     {

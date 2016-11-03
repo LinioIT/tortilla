@@ -1,15 +1,13 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Linio\Tortilla;
 
+use Linio\Exception\HttpException;
 use Prophecy\Argument;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Linio\Exception\HttpException;
-use Linio\Tortilla\Event\RequestEvent;
-use Linio\Tortilla\Event\ExceptionEvent;
 
 class ApplicationTest extends \PHPUnit_Framework_TestCase
 {

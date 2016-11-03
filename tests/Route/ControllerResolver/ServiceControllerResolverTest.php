@@ -1,10 +1,10 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Linio\Tortilla\Route\ControllerResolver;
 
 use Pimple\Container;
-use Symfony\Component\HttpFoundation\Response;
 
 class ServiceControllerResolverTest extends \PHPUnit_Framework_TestCase
 {

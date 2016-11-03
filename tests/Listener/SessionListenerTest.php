@@ -1,12 +1,13 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Linio\Tortilla\Listener;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Linio\Tortilla\Event\RequestEvent;
 use Linio\Tortilla\Event\ResponseEvent;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 
 class SessionListenerTest extends \PHPUnit_Framework_TestCase

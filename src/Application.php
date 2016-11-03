@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Linio\Tortilla;
@@ -27,7 +28,7 @@ use Symfony\Component\HttpKernel\TerminableInterface;
 class Application extends Container implements HttpKernelInterface, TerminableInterface
 {
     /**
-     * @param array $values The parameters or objects.
+     * @param array $values The parameters or objects
      */
     public function __construct(array $values = [])
     {

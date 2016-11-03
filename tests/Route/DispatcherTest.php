@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Linio\Tortilla\Route;
@@ -9,7 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 class DispatcherTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @expectedException Linio\Exception\NotFoundHttpException
+     * @expectedException \Linio\Exception\NotFoundHttpException
      */
     public function testIsDetectingNonExistingRoute()
     {
@@ -27,7 +28,7 @@ class DispatcherTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException Linio\Exception\MethodNotAllowedHttpException
+     * @expectedException \Linio\Exception\MethodNotAllowedHttpException
      */
     public function testIsDetectingMethodNotAllowed()
     {
@@ -79,10 +80,10 @@ class DispatcherTest extends \PHPUnit_Framework_TestCase
                         'regex' => '~^(?|/foo/([^/]+)/([0-9]+))$~',
                         'routeMap' => [
                             3 => ['fooHandler', ['name' => 'name', 'id' => 'id']],
-                        ]
+                        ],
                     ],
                 ],
-            ]
+            ],
         ]);
 
         $expectedResponse = new Response();
