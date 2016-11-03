@@ -10,14 +10,14 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 
-class SessionListenerTest extends \PHPUnit_Framework_TestCase
+class HttpSessionTest extends \PHPUnit_Framework_TestCase
 {
     public function testIsSettingUpSession()
     {
         $session = new Session();
         $request = new Request();
         $event = new RequestEvent($request);
-        $listener = new SessionListener();
+        $listener = new HttpSession();
         $listener->setSession($session);
         $listener->onRequest($event);
 
@@ -28,7 +28,7 @@ class SessionListenerTest extends \PHPUnit_Framework_TestCase
     {
         $request = new Request();
         $event = new RequestEvent($request);
-        $listener = new SessionListener();
+        $listener = new HttpSession();
         $listener->onRequest($event);
 
         $this->assertNull($request->getSession());
@@ -41,7 +41,7 @@ class SessionListenerTest extends \PHPUnit_Framework_TestCase
         $request->setSession($session);
 
         $event = new RequestEvent($request);
-        $listener = new SessionListener();
+        $listener = new HttpSession();
         $listener->onRequest($event);
 
         $this->assertEquals($request->getSession(), $session);
@@ -57,7 +57,7 @@ class SessionListenerTest extends \PHPUnit_Framework_TestCase
         $request->setSession($session->reveal());
 
         $event = new ResponseEvent($request, new Response());
-        $listener = new SessionListener();
+        $listener = new HttpSession();
         $listener->onResponse($event);
     }
 
@@ -71,7 +71,7 @@ class SessionListenerTest extends \PHPUnit_Framework_TestCase
         $request->setSession($session->reveal());
 
         $event = new ResponseEvent($request, new Response());
-        $listener = new SessionListener();
+        $listener = new HttpSession();
         $listener->onResponse($event);
     }
 }

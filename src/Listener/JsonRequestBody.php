@@ -8,7 +8,7 @@ use Linio\Component\Util\Json;
 use Linio\Exception\BadRequestHttpException;
 use Linio\Tortilla\Event\RequestEvent;
 
-class JsonBodyListener
+class JsonRequestBody
 {
     /**
      * @throws BadRequestHttpException

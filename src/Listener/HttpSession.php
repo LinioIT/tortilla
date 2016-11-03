@@ -8,7 +8,7 @@ use Linio\Tortilla\Event\RequestEvent;
 use Linio\Tortilla\Event\ResponseEvent;
 use Symfony\Component\HttpFoundation\Session\Session;
 
-class SessionListener
+class HttpSession
 {
     /**
      * @var Session

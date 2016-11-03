@@ -15,7 +15,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
     {
         $app = new Application();
         $this->assertInstanceOf('Symfony\Component\EventDispatcher\EventDispatcher', $app['event.dispatcher']);
-        $this->assertInstanceOf('Linio\Tortilla\Listener\JsonBodyListener', $app['application.json_body_listener']);
+        $this->assertInstanceOf('Linio\Tortilla\Listener\JsonRequestBody', $app['application.json_request_body']);
         $this->assertInstanceOf('Linio\Tortilla\Route\Dispatcher', $app['route.dispatcher']);
         $this->assertInstanceOf('Linio\Tortilla\Route\ControllerResolver\ServiceControllerResolver', $app['controller.resolver']);
         $this->assertInstanceOf('FastRoute\RouteParser\Std', $app['route.parser']);
@@ -139,9 +139,6 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
     {
         $request = Request::create('/foo/bar', 'GET');
 
-        $logger = $this->prophesize('Psr\Log\LoggerInterface');
-        $logger->log('alert', Argument::type('string'))->shouldBeCalled();
-
         $routeDispatcher = $this->prophesize('Linio\Tortilla\Route\Dispatcher');
         $routeDispatcher->handle($request)->willThrow(new \Exception());
 
@@ -150,7 +147,6 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $eventDispatcher->dispatch(ApplicationEvents::EXCEPTION, Argument::type('Linio\Tortilla\Event\ExceptionEvent'))->shouldBeCalled();
 
         $app = new Application();
-        $app['logger'] = $logger->reveal();
         $app['route.dispatcher'] = $routeDispatcher->reveal();
         $app['event.dispatcher'] = $eventDispatcher->reveal();
         $response = $app->handle($request);
@@ -166,9 +162,6 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $expectedResponse = new Response();
         $expectedResponse->setContent('error!');
 
-        $logger = $this->prophesize('Psr\Log\LoggerInterface');
-        $logger->log('alert', Argument::type('string'))->shouldBeCalled();
-
         $routeDispatcher = $this->prophesize('Linio\Tortilla\Route\Dispatcher');
         $routeDispatcher->handle($request)->willThrow(new \Exception());
 
@@ -181,7 +174,6 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
             });
 
         $app = new Application();
-        $app['logger'] = $logger->reveal();
         $app['route.dispatcher'] = $routeDispatcher->reveal();
         $app['event.dispatcher'] = $eventDispatcher->reveal();
         $response = $app->handle($request);
@@ -193,9 +185,6 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $request = Request::create('/foo/bar', 'GET');
         $exception = new \Exception();
 
-        $logger = $this->prophesize('Psr\Log\LoggerInterface');
-        $logger->log('alert', (string) $exception)->shouldBeCalled();
-
         $routeDispatcher = $this->prophesize('Linio\Tortilla\Route\Dispatcher');
         $routeDispatcher->handle($request)->willThrow($exception);
 
@@ -205,7 +194,6 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 
         $app = new Application();
         $app['debug'] = true;
-        $app['logger'] = $logger->reveal();
         $app['route.dispatcher'] = $routeDispatcher->reveal();
         $app['event.dispatcher'] = $eventDispatcher->reveal();
         $response = $app->handle($request);
@@ -219,9 +207,6 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $request = Request::create('/foo/bar', 'GET');
         $exception = new HttpException('foobar', 401, 1001);
 
-        $logger = $this->prophesize('Psr\Log\LoggerInterface');
-        $logger->log('warning', (string) $exception)->shouldBeCalled();
-
         $routeDispatcher = $this->prophesize('Linio\Tortilla\Route\Dispatcher');
         $routeDispatcher->handle($request)->willThrow($exception);
 
@@ -230,7 +215,6 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $eventDispatcher->dispatch(ApplicationEvents::EXCEPTION, Argument::type('Linio\Tortilla\Event\ExceptionEvent'))->shouldBeCalled();
 
         $app = new Application();
-        $app['logger'] = $logger->reveal();
         $app['route.dispatcher'] = $routeDispatcher->reveal();
         $app['event.dispatcher'] = $eventDispatcher->reveal();
         $response = $app->handle($request);

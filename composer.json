@@ -12,7 +12,8 @@
         "nikic/fast-route": "~1.0",
         "pimple/pimple": "~3.0",
         "linio/common": "~2.0",
-        "linio/util": "~2.0"
+        "linio/util": "~2.0",
+        "linio/microlog": "~1.0"
     },
     "require-dev": {
         "phpunit/phpunit": "~5.6",

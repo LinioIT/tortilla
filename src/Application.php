@@ -7,13 +7,14 @@ namespace Linio\Tortilla;
 use FastRoute\DataGenerator\GroupCountBased as DataGenerator;
 use FastRoute\RouteCollector;
 use FastRoute\RouteParser\Std as RouteParser;
+use Linio\Component\Microlog\Log;
 use Linio\Exception\ErrorException;
 use Linio\Exception\HttpException;
 use Linio\Tortilla\Event\ExceptionEvent;
 use Linio\Tortilla\Event\PostResponseEvent;
 use Linio\Tortilla\Event\RequestEvent;
 use Linio\Tortilla\Event\ResponseEvent;
-use Linio\Tortilla\Listener\JsonBodyListener;
+use Linio\Tortilla\Listener\JsonRequestBody;
 use Linio\Tortilla\Route\ControllerResolver\ServiceControllerResolver;
 use Linio\Tortilla\Route\Dispatcher;
 use Pimple\Container;
@@ -39,8 +40,8 @@ class Application extends Container implements HttpKernelInterface, TerminableIn
             return new EventDispatcher();
         };
 
-        $this['application.json_body_listener'] = function () {
-            return new JsonBodyListener();
+        $this['application.json_request_body'] = function () {
+            return new JsonRequestBody();
         };
 
         $this['controller.resolver'] = function () {
@@ -69,7 +70,7 @@ class Application extends Container implements HttpKernelInterface, TerminableIn
         parent::__construct($values);
 
         $this->extend('event.dispatcher', function (EventDispatcher $eventDispatcher) {
-            $eventDispatcher->addListener(ApplicationEvents::REQUEST, [$this['application.json_body_listener'], 'onRequest']);
+            $eventDispatcher->addListener(ApplicationEvents::REQUEST, [$this['application.json_request_body'], 'onRequest']);
 
             return $eventDispatcher;
         });
@@ -194,10 +195,7 @@ class Application extends Container implements HttpKernelInterface, TerminableIn
     {
         $event = new ExceptionEvent($exception, $request);
         $this['event.dispatcher']->dispatch(ApplicationEvents::EXCEPTION, $event);
-
-        if (isset($this['logger'])) {
-            $this['logger']->log(($exception instanceof ErrorException) ? $exception->getLogLevel() : LogLevel::ALERT, (string) $exception);
-        }
+        Log::log(($exception instanceof ErrorException) ? $exception->getLogLevel() : LogLevel::ALERT, $exception);
 
         if ($event->hasResponse()) {
             return $event->getResponse();

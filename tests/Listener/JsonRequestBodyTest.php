@@ -7,7 +7,7 @@ namespace Linio\Tortilla\Listener;
 use Linio\Tortilla\Event\RequestEvent;
 use Symfony\Component\HttpFoundation\Request;
 
-class JsonBodyListenerTest extends \PHPUnit_Framework_TestCase
+class JsonRequestBodyTest extends \PHPUnit_Framework_TestCase
 {
     public function testIsConvertingJsonBodyToArray()
     {
@@ -15,7 +15,7 @@ class JsonBodyListenerTest extends \PHPUnit_Framework_TestCase
         $request->headers->set('Content-Type', 'application/json');
         $event = new RequestEvent($request);
 
-        $listener = new JsonBodyListener();
+        $listener = new JsonRequestBody();
         $listener->onRequest($event);
 
         $this->assertEquals('bar', $request->get('foo'));
@@ -27,7 +27,7 @@ class JsonBodyListenerTest extends \PHPUnit_Framework_TestCase
         $request->headers->set('Content-Type', 'application/xml');
         $event = new RequestEvent($request);
 
-        $listener = new JsonBodyListener();
+        $listener = new JsonRequestBody();
         $this->assertNull($listener->onRequest($event));
     }
 
@@ -37,7 +37,7 @@ class JsonBodyListenerTest extends \PHPUnit_Framework_TestCase
         $request->headers->set('Content-Type', 'application/json');
         $event = new RequestEvent($request);
 
-        $listener = new JsonBodyListener();
+        $listener = new JsonRequestBody();
         $this->assertNull($listener->onRequest($event));
     }
 
@@ -50,7 +50,7 @@ class JsonBodyListenerTest extends \PHPUnit_Framework_TestCase
         $request->headers->set('Content-Type', 'application/json');
         $event = new RequestEvent($request);
 
-        $listener = new JsonBodyListener();
+        $listener = new JsonRequestBody();
         $listener->onRequest($event);
     }
 }

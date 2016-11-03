@@ -14,7 +14,7 @@ The recommended way to install Linio Tortilla is [through composer](http://getco
 ```JSON
 {
     "require": {
-        "linio/tortilla": "~1.0"
+        "linio/tortilla": "~2.0"
     }
 }
 ```
