@@ -29,10 +29,8 @@ class Dispatcher extends GroupCountBased
         switch ($result[0]) {
             case self::NOT_FOUND:
                 throw new NotFoundHttpException('Route not found: ' . $request->getPathInfo());
-
             case self::METHOD_NOT_ALLOWED:
                 throw new MethodNotAllowedHttpException('Method not allowed: ' . $request->getMethod());
-
             case self::FOUND:
                 $controller = $this->controllerResolver->getController($result[1]);
                 $params = array_values($result[2]);

@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Linio\Tortilla\Listener;
 
+use Linio\Component\Microlog\Log;
 use Linio\Tortilla\Event\RequestEvent;
 use Linio\Tortilla\Event\ResponseEvent;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Psr\Log\LoggerInterface;
-use Linio\Component\Microlog\Log;
 
 class RequestResponseLoggerTest extends \PHPUnit_Framework_TestCase
 {
