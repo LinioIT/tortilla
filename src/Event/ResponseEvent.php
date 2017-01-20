@@ -9,6 +9,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ResponseEvent extends ApplicationEvent
 {
+    const NAME = 'application.response';
+
     /**
      * @var Response
      */

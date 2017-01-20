@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Linio\Tortilla\Route;
 
+use Linio\Tortilla\Route\ControllerResolver\ControllerResolverInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -59,7 +60,7 @@ class DispatcherTest extends \PHPUnit_Framework_TestCase
 
         $expectedResponse = new Response();
 
-        $controllerResolver = $this->prophesize('Linio\Tortilla\Route\ControllerResolver\ControllerResolverInterface');
+        $controllerResolver = $this->prophesize(ControllerResolverInterface::class);
         $controllerResolver->getController('fooHandler')->willReturn(function (Request $request) use ($expectedResponse) {
             return $expectedResponse;
         });
@@ -88,7 +89,7 @@ class DispatcherTest extends \PHPUnit_Framework_TestCase
 
         $expectedResponse = new Response();
 
-        $controllerResolver = $this->prophesize('Linio\Tortilla\Route\ControllerResolver\ControllerResolverInterface');
+        $controllerResolver = $this->prophesize(ControllerResolverInterface::class);
         $controllerResolver->getController('fooHandler')->willReturn(function (Request $request, $name, $id) use ($expectedResponse) {
             $this->assertEquals('bar', $name);
             $this->assertEquals(42, $id);

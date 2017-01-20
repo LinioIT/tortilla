@@ -70,7 +70,7 @@ class Application extends Container implements HttpKernelInterface, TerminableIn
         parent::__construct($values);
 
         $this->extend('event.dispatcher', function (EventDispatcher $eventDispatcher) {
-            $eventDispatcher->addListener(ApplicationEvents::REQUEST, [$this['application.json_request_body'], 'onRequest']);
+            $eventDispatcher->addListener(RequestEvent::NAME, [$this['application.json_request_body'], 'onRequest']);
 
             return $eventDispatcher;
         });
@@ -174,7 +174,7 @@ class Application extends Container implements HttpKernelInterface, TerminableIn
     public function handle(Request $request, $type = HttpKernelInterface::MASTER_REQUEST, $catch = true)
     {
         $event = new RequestEvent($request);
-        $this['event.dispatcher']->dispatch(ApplicationEvents::REQUEST, $event);
+        $this['event.dispatcher']->dispatch(RequestEvent::NAME, $event);
 
         if ($event->hasResponse()) {
             return $event->getResponse();
@@ -194,7 +194,7 @@ class Application extends Container implements HttpKernelInterface, TerminableIn
     protected function handleErrors(\Throwable $exception, Request $request): Response
     {
         $event = new ExceptionEvent($exception, $request);
-        $this['event.dispatcher']->dispatch(ApplicationEvents::EXCEPTION, $event);
+        $this['event.dispatcher']->dispatch(ExceptionEvent::NAME, $event);
         Log::log(($exception instanceof ErrorException) ? $exception->getLogLevel() : LogLevel::ALERT, $exception);
 
         if ($event->hasResponse()) {
@@ -220,7 +220,7 @@ class Application extends Container implements HttpKernelInterface, TerminableIn
 
     public function terminate(Request $request, Response $response)
     {
-        $this['event.dispatcher']->dispatch(ApplicationEvents::TERMINATE, new PostResponseEvent($request, $response));
+        $this['event.dispatcher']->dispatch(PostResponseEvent::NAME, new PostResponseEvent($request, $response));
     }
 
     public function run(Request $request = null)
@@ -230,7 +230,7 @@ class Application extends Container implements HttpKernelInterface, TerminableIn
         }
 
         $response = $this->handle($request);
-        $this['event.dispatcher']->dispatch(ApplicationEvents::RESPONSE, new ResponseEvent($request, $response));
+        $this['event.dispatcher']->dispatch(ResponseEvent::NAME, new ResponseEvent($request, $response));
         $response->send();
         $this->terminate($request, $response);
     }

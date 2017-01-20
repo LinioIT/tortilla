@@ -8,6 +8,8 @@ use Symfony\Component\HttpFoundation\Request;
 
 class ExceptionEvent extends RequestEvent
 {
+    const NAME = 'application.exception';
+
     /**
      * @var \Throwable
      */

@@ -10,6 +10,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 class PostResponseEvent extends Event
 {
+    const NAME = 'application.terminate';
+
     /**
      * @var Request
      */

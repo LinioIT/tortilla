@@ -4,8 +4,19 @@ declare(strict_types=1);
 
 namespace Linio\Tortilla;
 
+use FastRoute\DataGenerator\GroupCountBased;
+use FastRoute\RouteCollector;
+use FastRoute\RouteParser\Std;
 use Linio\Exception\HttpException;
+use Linio\Tortilla\Event\ExceptionEvent;
+use Linio\Tortilla\Event\PostResponseEvent;
+use Linio\Tortilla\Event\RequestEvent;
+use Linio\Tortilla\Event\ResponseEvent;
+use Linio\Tortilla\Listener\JsonRequestBody;
+use Linio\Tortilla\Route\ControllerResolver\ServiceControllerResolver;
+use Linio\Tortilla\Route\Dispatcher;
 use Prophecy\Argument;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -14,19 +25,19 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
     public function testIsBuilding()
     {
         $app = new Application();
-        $this->assertInstanceOf('Symfony\Component\EventDispatcher\EventDispatcher', $app['event.dispatcher']);
-        $this->assertInstanceOf('Linio\Tortilla\Listener\JsonRequestBody', $app['application.json_request_body']);
-        $this->assertInstanceOf('Linio\Tortilla\Route\Dispatcher', $app['route.dispatcher']);
-        $this->assertInstanceOf('Linio\Tortilla\Route\ControllerResolver\ServiceControllerResolver', $app['controller.resolver']);
-        $this->assertInstanceOf('FastRoute\RouteParser\Std', $app['route.parser']);
-        $this->assertInstanceOf('FastRoute\DataGenerator\GroupCountBased', $app['route.data_generator']);
-        $this->assertInstanceOf('FastRoute\RouteCollector', $app['route.collector']);
+        $this->assertInstanceOf(EventDispatcher::class, $app['event.dispatcher']);
+        $this->assertInstanceOf(Dispatcher::class, $app['route.dispatcher']);
+        $this->assertInstanceOf(RouteCollector::class, $app['route.collector']);
+        $this->assertInstanceOf(JsonRequestBody::class, $app['application.json_request_body']);
+        $this->assertInstanceOf(ServiceControllerResolver::class, $app['controller.resolver']);
+        $this->assertInstanceOf(Std::class, $app['route.parser']);
+        $this->assertInstanceOf(GroupCountBased::class, $app['route.data_generator']);
     }
 
     public function testIsMappingGetRoutes()
     {
         $app = new Application();
-        $routeCollector = $this->prophesize('FastRoute\RouteCollector');
+        $routeCollector = $this->prophesize(RouteCollector::class);
         $routeCollector->addRoute('GET', 'foo', 'bar')->shouldBeCalled();
         $app['route.collector'] = $routeCollector->reveal();
 
@@ -36,7 +47,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
     public function testIsMappingPostRoutes()
     {
         $app = new Application();
-        $routeCollector = $this->prophesize('FastRoute\RouteCollector');
+        $routeCollector = $this->prophesize(RouteCollector::class);
         $routeCollector->addRoute('POST', 'foo', 'bar')->shouldBeCalled();
         $app['route.collector'] = $routeCollector->reveal();
 
@@ -46,7 +57,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
     public function testIsMappingPutRoutes()
     {
         $app = new Application();
-        $routeCollector = $this->prophesize('FastRoute\RouteCollector');
+        $routeCollector = $this->prophesize(RouteCollector::class);
         $routeCollector->addRoute('PUT', 'foo', 'bar')->shouldBeCalled();
         $app['route.collector'] = $routeCollector->reveal();
 
@@ -56,7 +67,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
     public function testIsMappingDeleteRoutes()
     {
         $app = new Application();
-        $routeCollector = $this->prophesize('FastRoute\RouteCollector');
+        $routeCollector = $this->prophesize(RouteCollector::class);
         $routeCollector->addRoute('DELETE', 'foo', 'bar')->shouldBeCalled();
         $app['route.collector'] = $routeCollector->reveal();
 
@@ -66,7 +77,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
     public function testIsMappingPatchRoutes()
     {
         $app = new Application();
-        $routeCollector = $this->prophesize('FastRoute\RouteCollector');
+        $routeCollector = $this->prophesize(RouteCollector::class);
         $routeCollector->addRoute('PATCH', 'foo', 'bar')->shouldBeCalled();
         $app['route.collector'] = $routeCollector->reveal();
 
@@ -76,7 +87,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
     public function testIsMappingOptionsRoutes()
     {
         $app = new Application();
-        $routeCollector = $this->prophesize('FastRoute\RouteCollector');
+        $routeCollector = $this->prophesize(RouteCollector::class);
         $routeCollector->addRoute('OPTIONS', 'foo', 'bar')->shouldBeCalled();
         $app['route.collector'] = $routeCollector->reveal();
 
@@ -86,7 +97,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
     public function testIsMappingRoutes()
     {
         $app = new Application();
-        $routeCollector = $this->prophesize('FastRoute\RouteCollector');
+        $routeCollector = $this->prophesize(RouteCollector::class);
         $routeCollector->addRoute(['GET', 'POST'], 'foo', 'bar')->shouldBeCalled();
         $app['route.collector'] = $routeCollector->reveal();
 
@@ -99,11 +110,11 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $expectedResponse = new Response();
         $expectedResponse->setContent('barfoo');
 
-        $routeDispatcher = $this->prophesize('Linio\Tortilla\Route\Dispatcher');
+        $routeDispatcher = $this->prophesize(Dispatcher::class);
         $routeDispatcher->handle($request)->willReturn($expectedResponse);
 
-        $eventDispatcher = $this->prophesize('Symfony\Component\EventDispatcher\EventDispatcher');
-        $eventDispatcher->dispatch(ApplicationEvents::REQUEST, Argument::type('Linio\Tortilla\Event\RequestEvent'))->shouldBeCalled();
+        $eventDispatcher = $this->prophesize(EventDispatcher::class);
+        $eventDispatcher->dispatch(RequestEvent::NAME, Argument::type(RequestEvent::class))->shouldBeCalled();
 
         $app = new Application();
         $app['route.dispatcher'] = $routeDispatcher->reveal();
@@ -118,12 +129,12 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $expectedResponse = new Response();
         $expectedResponse->setContent('barfoo');
 
-        $routeDispatcher = $this->prophesize('Linio\Tortilla\Route\Dispatcher');
+        $routeDispatcher = $this->prophesize(Dispatcher::class);
         $routeDispatcher->handle($request)->willReturn($expectedResponse);
 
-        $eventDispatcher = $this->prophesize('Symfony\Component\EventDispatcher\EventDispatcher');
+        $eventDispatcher = $this->prophesize(EventDispatcher::class);
         $eventDispatcher
-            ->dispatch(ApplicationEvents::REQUEST, Argument::type('Linio\Tortilla\Event\RequestEvent'))
+            ->dispatch(RequestEvent::NAME, Argument::type(RequestEvent::class))
             ->will(function ($args) use ($expectedResponse) {
                 $args[1]->setResponse($expectedResponse);
             });
@@ -139,12 +150,12 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
     {
         $request = Request::create('/foo/bar', 'GET');
 
-        $routeDispatcher = $this->prophesize('Linio\Tortilla\Route\Dispatcher');
+        $routeDispatcher = $this->prophesize(Dispatcher::class);
         $routeDispatcher->handle($request)->willThrow(new \Exception());
 
-        $eventDispatcher = $this->prophesize('Symfony\Component\EventDispatcher\EventDispatcher');
-        $eventDispatcher->dispatch(ApplicationEvents::REQUEST, Argument::type('Linio\Tortilla\Event\RequestEvent'))->shouldBeCalled();
-        $eventDispatcher->dispatch(ApplicationEvents::EXCEPTION, Argument::type('Linio\Tortilla\Event\ExceptionEvent'))->shouldBeCalled();
+        $eventDispatcher = $this->prophesize(EventDispatcher::class);
+        $eventDispatcher->dispatch(RequestEvent::NAME, Argument::type(RequestEvent::class))->shouldBeCalled();
+        $eventDispatcher->dispatch(ExceptionEvent::NAME, Argument::type(ExceptionEvent::class))->shouldBeCalled();
 
         $app = new Application();
         $app['route.dispatcher'] = $routeDispatcher->reveal();
@@ -162,13 +173,13 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $expectedResponse = new Response();
         $expectedResponse->setContent('error!');
 
-        $routeDispatcher = $this->prophesize('Linio\Tortilla\Route\Dispatcher');
+        $routeDispatcher = $this->prophesize(Dispatcher::class);
         $routeDispatcher->handle($request)->willThrow(new \Exception());
 
-        $eventDispatcher = $this->prophesize('Symfony\Component\EventDispatcher\EventDispatcher');
-        $eventDispatcher->dispatch(ApplicationEvents::REQUEST, Argument::type('Linio\Tortilla\Event\RequestEvent'))->shouldBeCalled();
+        $eventDispatcher = $this->prophesize(EventDispatcher::class);
+        $eventDispatcher->dispatch(RequestEvent::NAME, Argument::type(RequestEvent::class))->shouldBeCalled();
         $eventDispatcher
-            ->dispatch(ApplicationEvents::EXCEPTION, Argument::type('Linio\Tortilla\Event\ExceptionEvent'))
+            ->dispatch(ExceptionEvent::NAME, Argument::type(ExceptionEvent::class))
             ->will(function ($args) use ($expectedResponse) {
                 $args[1]->setResponse($expectedResponse);
             });
@@ -185,12 +196,12 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $request = Request::create('/foo/bar', 'GET');
         $exception = new \Exception();
 
-        $routeDispatcher = $this->prophesize('Linio\Tortilla\Route\Dispatcher');
+        $routeDispatcher = $this->prophesize(Dispatcher::class);
         $routeDispatcher->handle($request)->willThrow($exception);
 
-        $eventDispatcher = $this->prophesize('Symfony\Component\EventDispatcher\EventDispatcher');
-        $eventDispatcher->dispatch(ApplicationEvents::REQUEST, Argument::type('Linio\Tortilla\Event\RequestEvent'))->shouldBeCalled();
-        $eventDispatcher->dispatch(ApplicationEvents::EXCEPTION, Argument::type('Linio\Tortilla\Event\ExceptionEvent'))->shouldBeCalled();
+        $eventDispatcher = $this->prophesize(EventDispatcher::class);
+        $eventDispatcher->dispatch(RequestEvent::NAME, Argument::type(RequestEvent::class))->shouldBeCalled();
+        $eventDispatcher->dispatch(ExceptionEvent::NAME, Argument::type(ExceptionEvent::class))->shouldBeCalled();
 
         $app = new Application();
         $app['debug'] = true;
@@ -207,12 +218,12 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $request = Request::create('/foo/bar', 'GET');
         $exception = new HttpException('foobar', 401, 1001);
 
-        $routeDispatcher = $this->prophesize('Linio\Tortilla\Route\Dispatcher');
+        $routeDispatcher = $this->prophesize(Dispatcher::class);
         $routeDispatcher->handle($request)->willThrow($exception);
 
-        $eventDispatcher = $this->prophesize('Symfony\Component\EventDispatcher\EventDispatcher');
-        $eventDispatcher->dispatch(ApplicationEvents::REQUEST, Argument::type('Linio\Tortilla\Event\RequestEvent'))->shouldBeCalled();
-        $eventDispatcher->dispatch(ApplicationEvents::EXCEPTION, Argument::type('Linio\Tortilla\Event\ExceptionEvent'))->shouldBeCalled();
+        $eventDispatcher = $this->prophesize(EventDispatcher::class);
+        $eventDispatcher->dispatch(RequestEvent::NAME, Argument::type(RequestEvent::class))->shouldBeCalled();
+        $eventDispatcher->dispatch(ExceptionEvent::NAME, Argument::type(ExceptionEvent::class))->shouldBeCalled();
 
         $app = new Application();
         $app['route.dispatcher'] = $routeDispatcher->reveal();
@@ -233,11 +244,11 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $expectedResponse = new Response();
         $expectedResponse->setStatusCode(500);
 
-        $routeDispatcher = $this->prophesize('Linio\Tortilla\Route\Dispatcher');
+        $routeDispatcher = $this->prophesize(Dispatcher::class);
         $routeDispatcher->handle($request)->willThrow(new \Exception());
 
-        $eventDispatcher = $this->prophesize('Symfony\Component\EventDispatcher\EventDispatcher');
-        $eventDispatcher->dispatch(ApplicationEvents::REQUEST, Argument::type('Linio\Tortilla\Event\RequestEvent'))->shouldBeCalled();
+        $eventDispatcher = $this->prophesize(EventDispatcher::class);
+        $eventDispatcher->dispatch(RequestEvent::NAME, Argument::type(RequestEvent::class))->shouldBeCalled();
 
         $app = new Application();
         $app['route.dispatcher'] = $routeDispatcher->reveal();
@@ -251,13 +262,13 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $expectedResponse = new Response();
         $expectedResponse->setContent('barfoo');
 
-        $routeDispatcher = $this->prophesize('Linio\Tortilla\Route\Dispatcher');
+        $routeDispatcher = $this->prophesize(Dispatcher::class);
         $routeDispatcher->handle($request)->willReturn($expectedResponse);
 
-        $eventDispatcher = $this->prophesize('Symfony\Component\EventDispatcher\EventDispatcher');
-        $eventDispatcher->dispatch(ApplicationEvents::REQUEST, Argument::type('Linio\Tortilla\Event\RequestEvent'))->shouldBeCalled();
-        $eventDispatcher->dispatch(ApplicationEvents::RESPONSE, Argument::type('Linio\Tortilla\Event\ResponseEvent'))->shouldBeCalled();
-        $eventDispatcher->dispatch(ApplicationEvents::TERMINATE, Argument::type('Linio\Tortilla\Event\PostResponseEvent'))->shouldBeCalled();
+        $eventDispatcher = $this->prophesize(EventDispatcher::class);
+        $eventDispatcher->dispatch(RequestEvent::NAME, Argument::type(RequestEvent::class))->shouldBeCalled();
+        $eventDispatcher->dispatch(ResponseEvent::NAME, Argument::type(ResponseEvent::class))->shouldBeCalled();
+        $eventDispatcher->dispatch(PostResponseEvent::NAME, Argument::type(PostResponseEvent::class))->shouldBeCalled();
 
         $app = new Application();
         $app['route.dispatcher'] = $routeDispatcher->reveal();
