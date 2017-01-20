@@ -2,9 +2,9 @@ Linio Tortilla
 ==============
 [![Latest Stable Version](https://poser.pugx.org/linio/tortilla/v/stable.svg)](https://packagist.org/packages/linio/tortilla) [![License](https://poser.pugx.org/linio/tortilla/license.svg)](https://packagist.org/packages/linio/tortilla) [![Build Status](https://secure.travis-ci.org/LinioIT/tortilla.png)](http://travis-ci.org/LinioIT/tortilla) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/LinioIT/tortilla/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/LinioIT/tortilla/?branch=master)
 
-Linio Tortilla is an extremely lightweight framework built as a middleware layer, providing the base application to be passed to the stack. It proudly supports the [Stack PHP](http://stackphp.com) convention and it's built upon [FastRoute](https://github.com/nikic/FastRoute) and [Pimple](http://pimple.sensiolabs.org). The objective is to keep the web abstraction layer as thin as possible, but also allowing you to compose it with as many middlewares as you need.
+Linio Tortilla is provides a very thin web abstraction layer built on top of [FastRoute](https://github.com/nikic/FastRoute) and [Pimple](http://pimple.sensiolabs.org). No frills, light and efficient. We believe that the [web is just a delivery mechanism](https://youtu.be/WpkDN78P884?t=8m50s) and no framework should dictate how you design the architecture of your applications.
 
-With this philosophy, you can quickly build up a tailor-made, framework-agnostic HTTP stack. And, just like a tasty super-thin tortilla, wrap it with anything you can dream of.
+And, just like a tasty super-thin tortilla, you can wrap it around anything you want.
 
 Install
 -------
@@ -14,10 +14,15 @@ The recommended way to install Linio Tortilla is [through composer](http://getco
 ```JSON
 {
     "require": {
-        "linio/tortilla": "~2.0"
+        "linio/tortilla": "~1.2"
     }
 }
 ```
+
+If you need help preparing your tortilla, there are recipes available:
+
+    $ composer create-project linio/burrito-recipe full_app
+    $ composer create-project linio/tortilla-recipe basic_app
 
 Tests
 -----
@@ -54,8 +59,6 @@ $app->get('/hello/{name}', function (Request $request, $name) {
     return new Response('Hello ' . $name);
 });
 
-// add your Stack PHP middlewares to $app
-
 $app->run();
 ```
 
@@ -74,8 +77,6 @@ $app['default'] = function () {
     return new Acme\Controller\DefaultController();
 };
 $app->get('/hello/{name}', 'default:indexAction');
-
-// add your Stack PHP middlewares to $app
 
 $app->run();
 ```
