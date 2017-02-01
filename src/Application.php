@@ -173,14 +173,14 @@ class Application extends Container implements HttpKernelInterface, TerminableIn
 
     public function handle(Request $request, $type = HttpKernelInterface::MASTER_REQUEST, $catch = true)
     {
-        $event = new RequestEvent($request);
-        $this['event.dispatcher']->dispatch(RequestEvent::NAME, $event);
-
-        if ($event->hasResponse()) {
-            return $event->getResponse();
-        }
-
         try {
+            $event = new RequestEvent($request);
+            $this['event.dispatcher']->dispatch(RequestEvent::NAME, $event);
+
+            if ($event->hasResponse()) {
+                return $event->getResponse();
+            }
+
             return $this['route.dispatcher']->handle($request);
         } catch (\Throwable $exception) {
             if ($catch === false) {
