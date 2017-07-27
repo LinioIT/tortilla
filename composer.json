@@ -20,12 +20,14 @@
         "phpunit/phpunit": "~5.6",
         "friendsofphp/php-cs-fixer": "^2.0"
     },
-    "config": {
-        "bin-dir": "bin"
-    },
     "autoload": {
         "psr-4": {
             "Linio\\Tortilla\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Linio\\Tortilla\\": "tests/"
         }
     }
 }
