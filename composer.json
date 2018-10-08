@@ -12,7 +12,7 @@
         "monolog/monolog": "~1.22",
         "nikic/fast-route": "~1.1",
         "pimple/pimple": "~3.0",
-        "symfony/event-dispatcher": "~3.2",
+        "symfony/event-dispatcher": "~3.2 || ~4.0",
         "symfony/http-foundation": "~3.2",
         "symfony/http-kernel": "~3.2"
     },
