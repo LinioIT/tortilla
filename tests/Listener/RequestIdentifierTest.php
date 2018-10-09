@@ -9,7 +9,7 @@ use Linio\Tortilla\Event\ResponseEvent;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class RequestIdentifierTest extends \PHPUnit_Framework_TestCase
+class RequestIdentifierTest extends \PHPUnit\Framework\TestCase
 {
     public function testIsUsingExistingRequestId()
     {

@@ -20,7 +20,7 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class ApplicationTest extends \PHPUnit_Framework_TestCase
+class ApplicationTest extends \PHPUnit\Framework\TestCase
 {
     public function testIsBuilding()
     {
@@ -235,11 +235,10 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('application/json', $response->headers->get('Content-Type'));
     }
 
-    /**
-     * @expectedException \Exception
-     */
     public function testIsThrowingExceptions()
     {
+        $this->expectException(\Exception::class);
+
         $request = Request::create('/foo/bar', 'GET');
         $expectedResponse = new Response();
         $expectedResponse->setStatusCode(500);

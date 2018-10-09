@@ -17,7 +17,7 @@ class JsonRequestBody
     {
         $request = $event->getRequest();
 
-        if (0 !== strpos($request->headers->get('Content-Type', ''), 'application/json')) {
+        if (strpos($request->headers->get('Content-Type', ''), 'application/json') !== 0) {
             return;
         }
 

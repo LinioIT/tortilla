@@ -6,7 +6,7 @@ namespace Linio\Tortilla\Route\ControllerResolver;
 
 use Pimple\Container;
 
-class ServiceControllerResolverTest extends \PHPUnit_Framework_TestCase
+class ServiceControllerResolverTest extends \PHPUnit\Framework\TestCase
 {
     public function testIsGettingCallableController()
     {
@@ -19,12 +19,11 @@ class ServiceControllerResolverTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expectedCallable, $callable);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Unable to resolve provided controller: foobar
-     */
     public function testIsDetectingInvalidServiceController()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Unable to resolve provided controller: foobar');
+
         $resolver = new ServiceControllerResolver(new Container());
         $resolver->getController('foobar');
     }
@@ -35,12 +34,11 @@ class ServiceControllerResolverTest extends \PHPUnit_Framework_TestCase
         $resolver->setContainer(new Container());
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Unable to resolve provided controller service: foobar
-     */
     public function testIsDetectingUnregisteredServiceController()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Unable to resolve provided controller service: foobar');
+
         $resolver = new ServiceControllerResolver(new Container());
         $resolver->getController('foobar:indexAction');
     }

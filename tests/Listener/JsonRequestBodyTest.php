@@ -7,7 +7,7 @@ namespace Linio\Tortilla\Listener;
 use Linio\Tortilla\Event\RequestEvent;
 use Symfony\Component\HttpFoundation\Request;
 
-class JsonRequestBodyTest extends \PHPUnit_Framework_TestCase
+class JsonRequestBodyTest extends \PHPUnit\Framework\TestCase
 {
     public function testIsConvertingJsonBodyToArray()
     {
@@ -41,11 +41,10 @@ class JsonRequestBodyTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($listener->onRequest($event));
     }
 
-    /**
-     * @expectedException \Linio\Exception\BadRequestHttpException
-     */
     public function testIsDetectingBadJson()
     {
+        $this->expectException(\Linio\Exception\BadRequestHttpException::class);
+
         $request = new Request([], [], [], [], [], [], '{"foo" "bar"}');
         $request->headers->set('Content-Type', 'application/json');
         $event = new RequestEvent($request);

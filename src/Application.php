@@ -95,9 +95,6 @@ class Application extends Container implements HttpKernelInterface, TerminableIn
 
     /**
      * Maps a GET request to handler.
-     *
-     * @param string $pattern
-     * @param mixed  $handler
      */
     public function get(string $pattern, $handler)
     {
@@ -106,9 +103,6 @@ class Application extends Container implements HttpKernelInterface, TerminableIn
 
     /**
      * Maps a POST request to handler.
-     *
-     * @param string $pattern
-     * @param mixed  $handler
      */
     public function post(string $pattern, $handler)
     {
@@ -117,9 +111,6 @@ class Application extends Container implements HttpKernelInterface, TerminableIn
 
     /**
      * Maps a PUT request to handler.
-     *
-     * @param string $pattern
-     * @param mixed  $handler
      */
     public function put(string $pattern, $handler)
     {
@@ -128,9 +119,6 @@ class Application extends Container implements HttpKernelInterface, TerminableIn
 
     /**
      * Maps a DELETE request to handler.
-     *
-     * @param string $pattern
-     * @param mixed  $handler
      */
     public function delete(string $pattern, $handler)
     {
@@ -139,9 +127,6 @@ class Application extends Container implements HttpKernelInterface, TerminableIn
 
     /**
      * Maps a PATCH request to handler.
-     *
-     * @param string $pattern
-     * @param mixed  $handler
      */
     public function patch(string $pattern, $handler)
     {
@@ -150,9 +135,6 @@ class Application extends Container implements HttpKernelInterface, TerminableIn
 
     /**
      * Maps a OPTIONS request to handler.
-     *
-     * @param string $pattern
-     * @param mixed  $handler
      */
     public function options(string $pattern, $handler)
     {
@@ -161,10 +143,6 @@ class Application extends Container implements HttpKernelInterface, TerminableIn
 
     /**
      * Maps various HTTP requests to handler.
-     *
-     * @param array  $methods
-     * @param string $pattern
-     * @param mixed  $handler
      */
     public function match(array $methods, string $pattern, $handler)
     {
