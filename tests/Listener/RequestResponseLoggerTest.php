@@ -11,7 +11,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class RequestResponseLoggerTest extends \PHPUnit_Framework_TestCase
+class RequestResponseLoggerTest extends \PHPUnit\Framework\TestCase
 {
     public function testIsLoggingRequest()
     {

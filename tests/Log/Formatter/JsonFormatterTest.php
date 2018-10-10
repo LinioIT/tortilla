@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Linio\Tortilla\Log\Formatter;
 
-class JsonFormatterTest extends \PHPUnit_Framework_TestCase
+class JsonFormatterTest extends \PHPUnit\Framework\TestCase
 {
     public function testIsAddingTime()
     {

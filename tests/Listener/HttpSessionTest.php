@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 
-class HttpSessionTest extends \PHPUnit_Framework_TestCase
+class HttpSessionTest extends \PHPUnit\Framework\TestCase
 {
     public function testIsSettingUpSession()
     {

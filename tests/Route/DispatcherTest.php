@@ -8,13 +8,12 @@ use Linio\Tortilla\Route\ControllerResolver\ControllerResolverInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class DispatcherTest extends \PHPUnit_Framework_TestCase
+class DispatcherTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @expectedException \Linio\Exception\NotFoundHttpException
-     */
     public function testIsDetectingNonExistingRoute()
     {
+        $this->expectException(\Linio\Exception\NotFoundHttpException::class);
+
         $request = Request::create('/bar', 'GET');
         $dispatcher = new Dispatcher([
             [
@@ -28,11 +27,10 @@ class DispatcherTest extends \PHPUnit_Framework_TestCase
         $dispatcher->handle($request);
     }
 
-    /**
-     * @expectedException \Linio\Exception\MethodNotAllowedHttpException
-     */
     public function testIsDetectingMethodNotAllowed()
     {
+        $this->expectException(\Linio\Exception\MethodNotAllowedHttpException::class);
+
         $request = Request::create('/foo', 'POST');
         $dispatcher = new Dispatcher([
             [

@@ -24,7 +24,7 @@ class HttpSession
     {
         $request = $event->getRequest();
 
-        if (null === $this->session || $request->hasSession()) {
+        if ($this->session === null || $request->hasSession()) {
             return;
         }
 
