@@ -2,7 +2,7 @@ Linio Tortilla
 ==============
 [![Latest Stable Version](https://poser.pugx.org/linio/tortilla/v/stable.svg)](https://packagist.org/packages/linio/tortilla) [![License](https://poser.pugx.org/linio/tortilla/license.svg)](https://packagist.org/packages/linio/tortilla) [![Build Status](https://secure.travis-ci.org/LinioIT/tortilla.png)](http://travis-ci.org/LinioIT/tortilla) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/LinioIT/tortilla/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/LinioIT/tortilla/?branch=master)
 
-Linio Tortilla is provides a very thin web abstraction layer built on top of [FastRoute](https://github.com/nikic/FastRoute) and [Pimple](http://pimple.sensiolabs.org). No frills, light and efficient. We believe that the [web is just a delivery mechanism](https://youtu.be/WpkDN78P884?t=8m50s) and no framework should dictate how you design the architecture of your applications.
+Linio Tortilla provides a very thin web abstraction layer built on top of [FastRoute](https://github.com/nikic/FastRoute) and [Pimple](http://pimple.sensiolabs.org). No frills, light and efficient. We believe that the [web is just a delivery mechanism](https://youtu.be/WpkDN78P884?t=8m50s) and no framework should dictate how you design the architecture of your applications.
 
 And, just like a tasty super-thin tortilla, you can wrap it around anything you want.
 
