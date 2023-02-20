@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Linio\Tortilla\Event;
 
-use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class PostResponseEvent extends Event
 {

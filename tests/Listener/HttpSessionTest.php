@@ -6,12 +6,16 @@ namespace Linio\Tortilla\Listener;
 
 use Linio\Tortilla\Event\RequestEvent;
 use Linio\Tortilla\Event\ResponseEvent;
+use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 
-class HttpSessionTest extends \PHPUnit\Framework\TestCase
+class HttpSessionTest extends TestCase
 {
+    use ProphecyTrait;
+
     public function testIsSettingUpSession()
     {
         $session = new Session();
@@ -31,7 +35,7 @@ class HttpSessionTest extends \PHPUnit\Framework\TestCase
         $listener = new HttpSession();
         $listener->onRequest($event);
 
-        $this->assertNull($request->getSession());
+        $this->assertFalse($request->hasSession());
     }
 
     public function testIsKeepingExistingSession()

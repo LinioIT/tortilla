@@ -149,11 +149,11 @@ class Application extends Container implements HttpKernelInterface, TerminableIn
         $this['route.collector']->addRoute($methods, $pattern, $handler);
     }
 
-    public function handle(Request $request, $type = HttpKernelInterface::MASTER_REQUEST, $catch = true)
+    public function handle(Request $request, $type = HttpKernelInterface::MAIN_REQUEST, $catch = true): Response
     {
         try {
             $event = new RequestEvent($request);
-            $this['event.dispatcher']->dispatch(RequestEvent::NAME, $event);
+            $this['event.dispatcher']->dispatch($event, RequestEvent::NAME);
 
             if ($event->hasResponse()) {
                 return $event->getResponse();
@@ -172,7 +172,7 @@ class Application extends Container implements HttpKernelInterface, TerminableIn
     protected function handleErrors(\Throwable $exception, Request $request): Response
     {
         $event = new ExceptionEvent($exception, $request);
-        $this['event.dispatcher']->dispatch(ExceptionEvent::NAME, $event);
+        $this['event.dispatcher']->dispatch($event, ExceptionEvent::NAME);
         Log::log($exception, ($exception instanceof ErrorException) ? $exception->getLogLevel() : LogLevel::ALERT);
 
         if ($event->hasResponse()) {
@@ -198,7 +198,7 @@ class Application extends Container implements HttpKernelInterface, TerminableIn
 
     public function terminate(Request $request, Response $response)
     {
-        $this['event.dispatcher']->dispatch(PostResponseEvent::NAME, new PostResponseEvent($request, $response));
+        $this['event.dispatcher']->dispatch(new PostResponseEvent($request, $response), PostResponseEvent::NAME);
     }
 
     public function run(Request $request = null)
@@ -208,7 +208,7 @@ class Application extends Container implements HttpKernelInterface, TerminableIn
         }
 
         $response = $this->handle($request);
-        $this['event.dispatcher']->dispatch(ResponseEvent::NAME, new ResponseEvent($request, $response));
+        $this['event.dispatcher']->dispatch(new ResponseEvent($request, $response), ResponseEvent::NAME);
         $response->send();
         $this->terminate($request, $response);
     }

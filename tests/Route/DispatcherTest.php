@@ -5,11 +5,15 @@ declare(strict_types=1);
 namespace Linio\Tortilla\Route;
 
 use Linio\Tortilla\Route\ControllerResolver\ControllerResolverInterface;
+use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class DispatcherTest extends \PHPUnit\Framework\TestCase
+class DispatcherTest extends TestCase
 {
+    use ProphecyTrait;
+
     public function testIsDetectingNonExistingRoute()
     {
         $this->expectException(\Linio\Exception\NotFoundHttpException::class);
