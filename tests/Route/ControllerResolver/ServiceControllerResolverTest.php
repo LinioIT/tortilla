@@ -41,11 +41,11 @@ class ServiceControllerResolverTest extends \PHPUnit\Framework\TestCase
     {
         $container = new Container();
         $container['foobar'] = function () {
-            return new \StdClass();
+            return new \stdClass();
         };
 
         $resolver = new ServiceControllerResolver($container);
         $callable = $resolver->getController('foobar:indexAction');
-        $this->assertEquals([new \StdClass(), 'indexAction'], $callable);
+        $this->assertEquals([new \stdClass(), 'indexAction'], $callable);
     }
 }

@@ -10,7 +10,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class PostResponseEvent extends Event
 {
-    const NAME = 'application.terminate';
+    public const NAME = 'application.terminate';
 
     /**
      * @var Request

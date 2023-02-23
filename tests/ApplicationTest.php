@@ -143,7 +143,7 @@ class ApplicationTest extends TestCase
             ->will(function ($args) use ($expectedResponse) {
                 $args[1]->setResponse($expectedResponse);
             })
-        ->willReturn($expectedResponse);
+            ->willReturn($expectedResponse);
 
         $app = new Application();
         $app['route.dispatcher'] = $routeDispatcher->reveal();
