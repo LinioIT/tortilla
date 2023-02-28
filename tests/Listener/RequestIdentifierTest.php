@@ -6,11 +6,15 @@ namespace Linio\Tortilla\Listener;
 
 use Linio\Tortilla\Event\RequestEvent;
 use Linio\Tortilla\Event\ResponseEvent;
+use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class RequestIdentifierTest extends \PHPUnit\Framework\TestCase
+class RequestIdentifierTest extends TestCase
 {
+    use ProphecyTrait;
+
     public function testIsUsingExistingRequestId()
     {
         $request = new Request();
@@ -31,7 +35,7 @@ class RequestIdentifierTest extends \PHPUnit\Framework\TestCase
         $listener = new RequestIdentifier();
         $listener->onRequest($event);
 
-        $this->assertRegexp('/[a-zA-Z0-9]+/', $request->headers->get('X-Request-ID'));
+        $this->assertMatchesRegularExpression('/[a-zA-Z0-9]+/', $request->headers->get('X-Request-ID'));
     }
 
     public function testIsSendingRequestIdWithResponse()

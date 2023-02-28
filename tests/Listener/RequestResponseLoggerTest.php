@@ -7,12 +7,16 @@ namespace Linio\Tortilla\Listener;
 use Linio\Component\Microlog\Log;
 use Linio\Tortilla\Event\RequestEvent;
 use Linio\Tortilla\Event\ResponseEvent;
+use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class RequestResponseLoggerTest extends \PHPUnit\Framework\TestCase
+class RequestResponseLoggerTest extends TestCase
 {
+    use ProphecyTrait;
+
     public function testIsLoggingRequest()
     {
         $request = new Request();

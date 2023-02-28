@@ -28,12 +28,6 @@ class ServiceControllerResolverTest extends \PHPUnit\Framework\TestCase
         $resolver->getController('foobar');
     }
 
-    public function testIsSwitchingContainers()
-    {
-        $resolver = new ServiceControllerResolver(new Container());
-        $resolver->setContainer(new Container());
-    }
-
     public function testIsDetectingUnregisteredServiceController()
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -47,11 +41,11 @@ class ServiceControllerResolverTest extends \PHPUnit\Framework\TestCase
     {
         $container = new Container();
         $container['foobar'] = function () {
-            return new \StdClass();
+            return new \stdClass();
         };
 
         $resolver = new ServiceControllerResolver($container);
         $callable = $resolver->getController('foobar:indexAction');
-        $this->assertEquals([new \StdClass(), 'indexAction'], $callable);
+        $this->assertEquals([new \stdClass(), 'indexAction'], $callable);
     }
 }

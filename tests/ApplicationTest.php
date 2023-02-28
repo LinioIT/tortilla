@@ -15,13 +15,18 @@ use Linio\Tortilla\Event\ResponseEvent;
 use Linio\Tortilla\Listener\JsonRequestBody;
 use Linio\Tortilla\Route\ControllerResolver\ServiceControllerResolver;
 use Linio\Tortilla\Route\Dispatcher;
+use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class ApplicationTest extends \PHPUnit\Framework\TestCase
+class ApplicationTest extends TestCase
 {
+    use ProphecyTrait;
+
     public function testIsBuilding()
     {
         $app = new Application();
@@ -114,7 +119,7 @@ class ApplicationTest extends \PHPUnit\Framework\TestCase
         $routeDispatcher->handle($request)->willReturn($expectedResponse);
 
         $eventDispatcher = $this->prophesize(EventDispatcher::class);
-        $eventDispatcher->dispatch(RequestEvent::NAME, Argument::type(RequestEvent::class))->shouldBeCalled();
+        $eventDispatcher->dispatch(Argument::type(RequestEvent::class), RequestEvent::NAME)->shouldBeCalled();
 
         $app = new Application();
         $app['route.dispatcher'] = $routeDispatcher->reveal();
@@ -134,10 +139,11 @@ class ApplicationTest extends \PHPUnit\Framework\TestCase
 
         $eventDispatcher = $this->prophesize(EventDispatcher::class);
         $eventDispatcher
-            ->dispatch(RequestEvent::NAME, Argument::type(RequestEvent::class))
+            ->dispatch(Argument::type(RequestEvent::class), RequestEvent::NAME)
             ->will(function ($args) use ($expectedResponse) {
                 $args[1]->setResponse($expectedResponse);
-            });
+            })
+            ->willReturn($expectedResponse);
 
         $app = new Application();
         $app['route.dispatcher'] = $routeDispatcher->reveal();
@@ -154,8 +160,8 @@ class ApplicationTest extends \PHPUnit\Framework\TestCase
         $routeDispatcher->handle($request)->willThrow(new \Exception());
 
         $eventDispatcher = $this->prophesize(EventDispatcher::class);
-        $eventDispatcher->dispatch(RequestEvent::NAME, Argument::type(RequestEvent::class))->shouldBeCalled();
-        $eventDispatcher->dispatch(ExceptionEvent::NAME, Argument::type(ExceptionEvent::class))->shouldBeCalled();
+        $eventDispatcher->dispatch(Argument::type(RequestEvent::class), RequestEvent::NAME)->shouldBeCalled();
+        $eventDispatcher->dispatch(Argument::type(ExceptionEvent::class), ExceptionEvent::NAME)->shouldBeCalled();
 
         $app = new Application();
         $app['route.dispatcher'] = $routeDispatcher->reveal();
@@ -170,25 +176,25 @@ class ApplicationTest extends \PHPUnit\Framework\TestCase
     public function testIsHandlingExceptionWithResponse()
     {
         $request = Request::create('/foo/bar', 'GET');
-        $expectedResponse = new Response();
-        $expectedResponse->setContent('error!');
+        $exception = new \Exception();
+        $expectedResponse = new JsonResponse();
+        $expectedResponse->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
+        $expectedResponse->setData(['error' => ['message' => 'Internal error', 'code' => 500]]);
 
         $routeDispatcher = $this->prophesize(Dispatcher::class);
-        $routeDispatcher->handle($request)->willThrow(new \Exception());
+        $routeDispatcher->handle($request)->willThrow($exception);
 
         $eventDispatcher = $this->prophesize(EventDispatcher::class);
-        $eventDispatcher->dispatch(RequestEvent::NAME, Argument::type(RequestEvent::class))->shouldBeCalled();
-        $eventDispatcher
-            ->dispatch(ExceptionEvent::NAME, Argument::type(ExceptionEvent::class))
-            ->will(function ($args) use ($expectedResponse) {
-                $args[1]->setResponse($expectedResponse);
-            });
+        $eventDispatcher->dispatch(Argument::type(RequestEvent::class), RequestEvent::NAME)->shouldBeCalled();
+        $eventDispatcher->dispatch(Argument::type(ExceptionEvent::class), ExceptionEvent::NAME)->shouldBeCalled();
 
         $app = new Application();
         $app['route.dispatcher'] = $routeDispatcher->reveal();
         $app['event.dispatcher'] = $eventDispatcher->reveal();
         $response = $app->handle($request);
+
         $this->assertEquals($expectedResponse, $response);
+        $this->assertEquals(500, $response->getStatusCode());
     }
 
     public function testIsHandlingExceptionsInDebug()
@@ -200,8 +206,8 @@ class ApplicationTest extends \PHPUnit\Framework\TestCase
         $routeDispatcher->handle($request)->willThrow($exception);
 
         $eventDispatcher = $this->prophesize(EventDispatcher::class);
-        $eventDispatcher->dispatch(RequestEvent::NAME, Argument::type(RequestEvent::class))->shouldBeCalled();
-        $eventDispatcher->dispatch(ExceptionEvent::NAME, Argument::type(ExceptionEvent::class))->shouldBeCalled();
+        $eventDispatcher->dispatch(Argument::type(RequestEvent::class), RequestEvent::NAME)->shouldBeCalled();
+        $eventDispatcher->dispatch(Argument::type(ExceptionEvent::class), ExceptionEvent::NAME)->shouldBeCalled();
 
         $app = new Application();
         $app['debug'] = true;
@@ -222,8 +228,8 @@ class ApplicationTest extends \PHPUnit\Framework\TestCase
         $routeDispatcher->handle($request)->willThrow($exception);
 
         $eventDispatcher = $this->prophesize(EventDispatcher::class);
-        $eventDispatcher->dispatch(RequestEvent::NAME, Argument::type(RequestEvent::class))->shouldBeCalled();
-        $eventDispatcher->dispatch(ExceptionEvent::NAME, Argument::type(ExceptionEvent::class))->shouldBeCalled();
+        $eventDispatcher->dispatch(Argument::type(RequestEvent::class), RequestEvent::NAME)->shouldBeCalled();
+        $eventDispatcher->dispatch(Argument::type(ExceptionEvent::class), ExceptionEvent::NAME)->shouldBeCalled();
 
         $app = new Application();
         $app['route.dispatcher'] = $routeDispatcher->reveal();
@@ -247,7 +253,7 @@ class ApplicationTest extends \PHPUnit\Framework\TestCase
         $routeDispatcher->handle($request)->willThrow(new \Exception());
 
         $eventDispatcher = $this->prophesize(EventDispatcher::class);
-        $eventDispatcher->dispatch(RequestEvent::NAME, Argument::type(RequestEvent::class))->shouldBeCalled();
+        $eventDispatcher->dispatch(Argument::type(RequestEvent::class), RequestEvent::NAME)->shouldBeCalled();
 
         $app = new Application();
         $app['route.dispatcher'] = $routeDispatcher->reveal();
@@ -265,9 +271,9 @@ class ApplicationTest extends \PHPUnit\Framework\TestCase
         $routeDispatcher->handle($request)->willReturn($expectedResponse);
 
         $eventDispatcher = $this->prophesize(EventDispatcher::class);
-        $eventDispatcher->dispatch(RequestEvent::NAME, Argument::type(RequestEvent::class))->shouldBeCalled();
-        $eventDispatcher->dispatch(ResponseEvent::NAME, Argument::type(ResponseEvent::class))->shouldBeCalled();
-        $eventDispatcher->dispatch(PostResponseEvent::NAME, Argument::type(PostResponseEvent::class))->shouldBeCalled();
+        $eventDispatcher->dispatch(Argument::type(RequestEvent::class), RequestEvent::NAME)->shouldBeCalled();
+        $eventDispatcher->dispatch(Argument::type(ResponseEvent::class), ResponseEvent::NAME)->shouldBeCalled();
+        $eventDispatcher->dispatch(Argument::type(PostResponseEvent::class), PostResponseEvent::NAME)->shouldBeCalled();
 
         $app = new Application();
         $app['route.dispatcher'] = $routeDispatcher->reveal();

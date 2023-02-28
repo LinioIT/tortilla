@@ -7,7 +7,6 @@
          convertErrorsToExceptions="true"
          convertNoticesToExceptions="true"
          convertWarningsToExceptions="true"
-         syntaxCheck="true"
          stopOnFailure="false"
          bootstrap="./vendor/autoload.php">
     <testsuites>
@@ -15,17 +14,16 @@
             <directory>./tests</directory>
         </testsuite>
     </testsuites>
-    <filter>
-        <whitelist addUncoveredFilesFromWhitelist="true">
-            <directory suffix=".php">./src</directory>
-            <exclude>
-                <directory suffix="Interface.php">./src</directory>
-                <directory suffix="Aware.php">./src</directory>
-                <directory suffix="Trait.php">./src</directory>
-            </exclude>
-        </whitelist>
-        <blacklist>
-            <directory>./vendor</directory>
-        </blacklist>
-    </filter>
+
+    <coverage processUncoveredFiles="true">
+        <include>
+            <directory suffix=".php">src</directory>
+        </include>
+
+        <exclude>
+            <file>src/Interface.php</file>
+            <file>src/Aware.php</file>
+            <file>src/Trait.php</file>
+        </exclude>
+    </coverage>
 </phpunit>
