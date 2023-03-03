@@ -9,6 +9,8 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class DispatcherTest extends TestCase
 {
@@ -16,7 +18,7 @@ class DispatcherTest extends TestCase
 
     public function testIsDetectingNonExistingRoute()
     {
-        $this->expectException(\Linio\Exception\NotFoundHttpException::class);
+        $this->expectException(NotFoundHttpException::class);
 
         $request = Request::create('/bar', 'GET');
         $dispatcher = new Dispatcher([
@@ -33,7 +35,7 @@ class DispatcherTest extends TestCase
 
     public function testIsDetectingMethodNotAllowed()
     {
-        $this->expectException(\Linio\Exception\MethodNotAllowedHttpException::class);
+        $this->expectException(MethodNotAllowedHttpException::class);
 
         $request = Request::create('/foo', 'POST');
         $dispatcher = new Dispatcher([

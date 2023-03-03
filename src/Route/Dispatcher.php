@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Linio\Tortilla\Route;
 
 use FastRoute\Dispatcher\GroupCountBased;
-use Linio\Exception\MethodNotAllowedHttpException;
-use Linio\Exception\NotFoundHttpException;
 use Linio\Tortilla\Route\ControllerResolver\ControllerResolverInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class Dispatcher extends GroupCountBased
 {
@@ -30,7 +30,7 @@ class Dispatcher extends GroupCountBased
             case self::NOT_FOUND:
                 throw new NotFoundHttpException('Route not found: ' . $request->getPathInfo());
             case self::METHOD_NOT_ALLOWED:
-                throw new MethodNotAllowedHttpException('Method not allowed: ' . $request->getMethod());
+                throw new MethodNotAllowedHttpException(['Method not allowed: ' . $request->getMethod()]);
             case self::FOUND:
                 $controller = $this->controllerResolver->getController($result[1]);
                 $params = array_values($result[2]);

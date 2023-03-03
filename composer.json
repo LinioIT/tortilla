@@ -6,7 +6,7 @@
     "license": "BSD-3-Clause",
     "require": {
         "php": ">=8.1",
-        "linio/common": "~2.0",
+        "linio/common": "^4.1",
         "linio/microlog": "~1.0",
         "linio/util": "~4.0",
         "monolog/monolog": "~1.22",

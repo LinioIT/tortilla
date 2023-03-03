@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Linio\Tortilla\Listener;
 
 use Linio\Component\Util\Json;
-use Linio\Exception\BadRequestHttpException;
 use Linio\Tortilla\Event\RequestEvent;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class JsonRequestBody
 {

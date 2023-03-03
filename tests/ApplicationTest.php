@@ -7,7 +7,6 @@ namespace Linio\Tortilla;
 use FastRoute\DataGenerator\GroupCountBased;
 use FastRoute\RouteCollector;
 use FastRoute\RouteParser\Std;
-use Linio\Exception\HttpException;
 use Linio\Tortilla\Event\ExceptionEvent;
 use Linio\Tortilla\Event\PostResponseEvent;
 use Linio\Tortilla\Event\RequestEvent;
@@ -22,6 +21,7 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class ApplicationTest extends TestCase
 {
@@ -222,7 +222,7 @@ class ApplicationTest extends TestCase
     public function testIsHandlingHttpExceptions()
     {
         $request = Request::create('/foo/bar', 'GET');
-        $exception = new HttpException('foobar', 401, 1001);
+        $exception = new HttpException(401, 'foobar', null, [], 1001);
 
         $routeDispatcher = $this->prophesize(Dispatcher::class);
         $routeDispatcher->handle($request)->willThrow($exception);
