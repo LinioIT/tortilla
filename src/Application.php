@@ -172,7 +172,7 @@ class Application extends Container implements HttpKernelInterface, TerminableIn
     {
         $event = new ExceptionEvent($exception, $request);
         $this['event.dispatcher']->dispatch($event, ExceptionEvent::NAME);
-        Log::log($exception, ($exception instanceof \ErrorException) ? $exception->getLogLevel() : LogLevel::ALERT);
+        Log::log($exception->getMessage(), LogLevel::ALERT);
 
         if ($event->hasResponse()) {
             return $event->getResponse();

@@ -8,7 +8,7 @@ use Monolog\Formatter\JsonFormatter as BaseJsonFormatter;
 
 class JsonFormatter extends BaseJsonFormatter
 {
-    public function format(array $record)
+    public function format(array $record): string
     {
         if (isset($record['datetime'])) {
             $record['time'] = substr($record['datetime']->format('U.u'), 0, -3);

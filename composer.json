@@ -9,7 +9,7 @@
         "linio/common": "^4.1",
         "linio/microlog": "~1.0",
         "linio/util": "~4.0",
-        "monolog/monolog": "~1.22",
+        "monolog/monolog": "^2.3",
         "nikic/fast-route": "~1.1",
         "pimple/pimple": "~3.0",
         "symfony/event-dispatcher": "~6.1.9",
