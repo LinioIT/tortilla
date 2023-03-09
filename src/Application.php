@@ -8,8 +8,6 @@ use FastRoute\DataGenerator\GroupCountBased as DataGenerator;
 use FastRoute\RouteCollector;
 use FastRoute\RouteParser\Std as RouteParser;
 use Linio\Component\Microlog\Log;
-use Linio\Exception\ErrorException;
-use Linio\Exception\HttpException;
 use Linio\Tortilla\Event\ExceptionEvent;
 use Linio\Tortilla\Event\PostResponseEvent;
 use Linio\Tortilla\Event\RequestEvent;
@@ -23,6 +21,7 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\TerminableInterface;
 
@@ -173,7 +172,7 @@ class Application extends Container implements HttpKernelInterface, TerminableIn
     {
         $event = new ExceptionEvent($exception, $request);
         $this['event.dispatcher']->dispatch($event, ExceptionEvent::NAME);
-        Log::log($exception, ($exception instanceof ErrorException) ? $exception->getLogLevel() : LogLevel::ALERT);
+        Log::log($exception->getMessage(), LogLevel::ALERT);
 
         if ($event->hasResponse()) {
             return $event->getResponse();
