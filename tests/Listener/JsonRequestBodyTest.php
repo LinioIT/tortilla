@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Linio\Tortilla\Listener;
 
+use Linio\Common\Exception\ClientException;
 use Linio\Tortilla\Event\RequestEvent;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class JsonRequestBodyTest extends \PHPUnit\Framework\TestCase
 {
@@ -44,7 +44,7 @@ class JsonRequestBodyTest extends \PHPUnit\Framework\TestCase
 
     public function testIsDetectingBadJson()
     {
-        $this->expectException(BadRequestHttpException::class);
+        $this->expectException(ClientException::class);
 
         $request = new Request([], [], [], [], [], [], '{"foo" "bar"}');
         $request->headers->set('Content-Type', 'application/json');

@@ -7,6 +7,7 @@ namespace Linio\Tortilla;
 use FastRoute\DataGenerator\GroupCountBased as DataGenerator;
 use FastRoute\RouteCollector;
 use FastRoute\RouteParser\Std as RouteParser;
+use Linio\Common\Exception\DomainException;
 use Linio\Component\Microlog\Log;
 use Linio\Tortilla\Event\ExceptionEvent;
 use Linio\Tortilla\Event\PostResponseEvent;
@@ -21,7 +22,6 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\TerminableInterface;
 
@@ -186,9 +186,8 @@ class Application extends Container implements HttpKernelInterface, TerminableIn
         $response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
         $response->setData(['error' => ['message' => 'Internal error', 'code' => 500]]);
 
-        if ($exception instanceof HttpException) {
-            $response->setStatusCode($exception->getStatusCode());
-            $response->headers->replace($exception->getHeaders());
+        if ($exception instanceof DomainException) {
+            $response->setStatusCode($exception->getCode());
             $response->setData(['error' => ['message' => $exception->getMessage(), 'code' => $exception->getCode()]]);
         }
 

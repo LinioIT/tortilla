@@ -4,14 +4,15 @@ declare(strict_types=1);
 
 namespace Linio\Tortilla\Listener;
 
+use Linio\Common\Exception\ClientException;
+use Linio\Common\Exception\ExceptionTokens;
 use Linio\Component\Util\Json;
 use Linio\Tortilla\Event\RequestEvent;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class JsonRequestBody
 {
     /**
-     * @throws BadRequestHttpException
+     * @throws ClientException
      */
     public function onRequest(RequestEvent $event)
     {
@@ -28,7 +29,7 @@ class JsonRequestBody
         try {
             $data = Json::decode($content);
         } catch (\Exception $exception) {
-            throw new BadRequestHttpException('Invalid JSON.');
+            throw new ClientException(ExceptionTokens::INVALID_REQUEST, 400, 'Invalid JSON.');
         }
 
         $request->request->replace(is_array($data) ? $data : []);

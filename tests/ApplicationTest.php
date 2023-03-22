@@ -7,6 +7,8 @@ namespace Linio\Tortilla;
 use FastRoute\DataGenerator\GroupCountBased;
 use FastRoute\RouteCollector;
 use FastRoute\RouteParser\Std;
+use Linio\Common\Exception\DomainException;
+use Linio\Common\Exception\ExceptionTokens;
 use Linio\Tortilla\Event\ExceptionEvent;
 use Linio\Tortilla\Event\PostResponseEvent;
 use Linio\Tortilla\Event\RequestEvent;
@@ -21,7 +23,6 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class ApplicationTest extends TestCase
 {
@@ -222,7 +223,7 @@ class ApplicationTest extends TestCase
     public function testIsHandlingHttpExceptions()
     {
         $request = Request::create('/foo/bar', 'GET');
-        $exception = new HttpException(401, 'foobar', null, [], 1001);
+        $exception = new DomainException(ExceptionTokens::AN_ERROR_HAS_OCCURRED, 401, 'foobar');
 
         $routeDispatcher = $this->prophesize(Dispatcher::class);
         $routeDispatcher->handle($request)->willThrow($exception);
@@ -236,7 +237,7 @@ class ApplicationTest extends TestCase
         $app['event.dispatcher'] = $eventDispatcher->reveal();
         $response = $app->handle($request);
 
-        $this->assertEquals('{"error":{"message":"foobar","code":1001}}', $response->getContent());
+        $this->assertEquals('{"error":{"message":"foobar","code":401}}', $response->getContent());
         $this->assertEquals(401, $response->getStatusCode());
         $this->assertEquals('application/json', $response->headers->get('Content-Type'));
     }

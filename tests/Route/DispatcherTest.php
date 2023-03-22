@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Linio\Tortilla\Route;
 
+use Linio\Common\Exception\ClientException;
 use Linio\Tortilla\Route\ControllerResolver\ControllerResolverInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class DispatcherTest extends TestCase
@@ -35,7 +35,7 @@ class DispatcherTest extends TestCase
 
     public function testIsDetectingMethodNotAllowed()
     {
-        $this->expectException(MethodNotAllowedHttpException::class);
+        $this->expectException(ClientException::class);
 
         $request = Request::create('/foo', 'POST');
         $dispatcher = new Dispatcher([
